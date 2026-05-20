@@ -29,6 +29,7 @@ def distance_m(lat1, lon1, lat2, lon2):
 def geocoder(adresse):
     url = "https://api-adresse.data.gouv.fr/search/"
     params = {"q": adresse, "limit": 1}
+
     response = requests.get(url, params=params, timeout=10)
     response.raise_for_status()
     data = response.json()
@@ -58,6 +59,7 @@ def meteo(latitude, longitude):
         "longitude": longitude,
         "current": "temperature_2m,wind_speed_10m,precipitation,rain"
     }
+
     response = requests.get(url, params=params, timeout=10)
     response.raise_for_status()
     data = response.json()
@@ -67,13 +69,15 @@ def meteo(latitude, longitude):
         "temperature": current.get("temperature_2m"),
         "vent_km_h": current.get("wind_speed_10m"),
         "precipitation_mm": current.get("precipitation"),
-        "pluie_mm": current.get("rain")
+        "pluie_mm": current.get("rain"),
+        "source": "Open-Meteo"
     }
 
 
 def risques(code_insee):
     url = "https://www.georisques.gouv.fr/api/v1/gaspar/risques"
     params = {"code_insee": code_insee}
+
     response = requests.get(url, params=params, timeout=15)
     response.raise_for_status()
     data = response.json()
@@ -81,19 +85,21 @@ def risques(code_insee):
     if data.get("results", 0) == 0:
         return {
             "message": "Aucun risque trouvé avec cet endpoint.",
-            "endpoint": "gaspar/risques"
+            "endpoint": "gaspar/risques",
+            "source": "Géorisques"
         }
 
     return {
         "nombre_resultats": data.get("results"),
         "donnees": data.get("data", []),
-        "endpoint": "gaspar/risques"
+        "endpoint": "gaspar/risques",
+        "source": "Géorisques"
     }
 
 
 def equipements_sensibles(latitude, longitude, rayon=500):
     overpass_query = f"""
-[out:json][timeout:20];
+[out:json][timeout:15];
 (
   node["amenity"="hospital"](around:{rayon},{latitude},{longitude});
   node["amenity"="clinic"](around:{rayon},{latitude},{longitude});
@@ -114,7 +120,7 @@ out body;
         url,
         data={"data": overpass_query},
         headers=headers,
-        timeout=30
+        timeout=20
     )
     response.raise_for_status()
     data = response.json()
@@ -145,6 +151,41 @@ out body;
     }
 
 
+def safe_call(nom, fonction, *args):
+    """
+    Exécute une fonction en évitant qu'une erreur API bloque toute l'analyse.
+    """
+    try:
+        return fonction(*args)
+    except requests.exceptions.Timeout:
+        return {
+            "erreur": True,
+            "message": f"Timeout lors de l'appel du module {nom}.",
+            "source": nom
+        }
+    except requests.exceptions.HTTPError as e:
+        return {
+            "erreur": True,
+            "message": f"Erreur HTTP lors de l'appel du module {nom}.",
+            "details": str(e),
+            "source": nom
+        }
+    except requests.exceptions.RequestException as e:
+        return {
+            "erreur": True,
+            "message": f"Erreur réseau lors de l'appel du module {nom}.",
+            "details": str(e),
+            "source": nom
+        }
+    except Exception as e:
+        return {
+            "erreur": True,
+            "message": f"Erreur inattendue dans le module {nom}.",
+            "details": str(e),
+            "source": nom
+        }
+
+
 try:
     localisation = geocoder(adresse)
 
@@ -154,20 +195,34 @@ try:
 
     latitude = localisation["latitude"]
     longitude = localisation["longitude"]
+    code_commune = localisation["code_commune"]
 
     output = {
         "requete": adresse,
         "localisation": localisation,
-        "meteo": meteo(latitude, longitude),
-        "risques": risques(localisation["code_commune"]),
-        "equipements_sensibles": equipements_sensibles(latitude, longitude, 500)
+        "meteo": safe_call("meteo_urgence", meteo, latitude, longitude),
+        "risques": safe_call("risques_site", risques, code_commune),
+        "equipements_sensibles": safe_call(
+            "equipements_sensibles",
+            equipements_sensibles,
+            latitude,
+            longitude,
+            500
+        )
     }
 
     print(json.dumps(output, ensure_ascii=False, indent=2))
 
 except requests.RequestException as e:
     print(json.dumps({
-        "error": "Erreur lors de l'appel à une API externe",
+        "error": "Erreur lors de la localisation de l'adresse",
+        "details": str(e)
+    }, ensure_ascii=False, indent=2))
+    sys.exit(1)
+
+except Exception as e:
+    print(json.dumps({
+        "error": "Erreur inattendue lors de l'analyse de zone",
         "details": str(e)
     }, ensure_ascii=False, indent=2))
     sys.exit(1)
