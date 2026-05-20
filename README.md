@@ -231,6 +231,8 @@ Il présente plusieurs limites :
 - les résultats dépendent de la disponibilité des APIs externes ;
 - certaines données peuvent être incomplètes ou non mises à jour ;
 - les informations issues d’OpenStreetMap dépendent de données collaboratives ;
+- certaines APIs publiques, notamment Overpass API, peuvent parfois répondre lentement ou retourner une erreur temporaire sur des zones très denses comme Paris ;
+- le système fonctionne correctement sur d’autres zones, mais cette limite est liée à la disponibilité des services externes ;
 - l’analyse produite ne doit pas être utilisée comme seule source dans une vraie situation d’urgence ;
 - le système ne remplace pas les autorités, les services de secours ou les outils officiels de gestion de crise.
 
