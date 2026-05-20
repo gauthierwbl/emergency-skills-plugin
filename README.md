@@ -97,6 +97,7 @@ Le skill principal est `analyse_zone`. Il orchestre les autres skills pour produ
 | `analyse_zone` | Lance l’analyse complète d’une adresse |
 | `localisation_site` | Transforme une adresse en coordonnées GPS |
 | `meteo_urgence` | Récupère les données météo actuelles |
+| `vigilance_meteo` | Estime un niveau de vigilance météo à partir des conditions actuelles |
 | `risques_site` | Identifie les risques connus d’une commune |
 | `equipements_sensibles` | Recherche les équipements sensibles à proximité |
 
@@ -110,6 +111,7 @@ Le projet s’appuie sur plusieurs APIs publiques.
 | Open-Meteo | Récupération des données météo actuelles |
 | Géorisques | Identification des risques naturels et technologiques |
 | OpenStreetMap / Overpass API | Recherche d’équipements sensibles à proximité |
+| Open-Meteo | Récupération de la météo actuelle et estimation d’une vigilance météo |
 
 ## Installation
 
