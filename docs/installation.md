@@ -4,448 +4,297 @@
 
 Ce document explique comment installer, configurer et lancer le projet **Emergency Skills Plugin**.
 
-Le projet est développé en Python et utilise plusieurs APIs publiques pour analyser une zone dans un contexte d’urgence.
+Le projet utilise :
 
-Il permet notamment de :
+* Python ;
+* plusieurs APIs publiques ;
+* Gemini comme agent IA ;
+* une architecture modulaire basée sur des skills.
 
-- localiser une adresse ;
-- récupérer la météo actuelle ;
-- rechercher les risques connus d’une commune ;
-- identifier des équipements sensibles à proximité ;
-- produire une analyse structurée.
+---
 
-## Prérequis
+# Prérequis
 
-Avant d’installer le projet, il faut disposer de :
+Avant de commencer, vérifier que les éléments suivants sont installés :
 
-- Python 3.10 ou supérieur ;
-- pip, le gestionnaire de paquets Python ;
-- une connexion Internet ;
-- un terminal ou une invite de commandes ;
-- Git, optionnel mais recommandé.
+* Python 3.10 ou supérieur ;
+* pip ;
+* Git (recommandé) ;
+* connexion Internet ;
+* clé API Gemini.
 
-Le projet utilise des APIs publiques.  
-Dans la version actuelle, aucune clé API n’est obligatoire.
+---
 
-## Récupération du projet
+# Récupération du projet
 
-Le projet peut être récupéré de deux manières.
-
-### Méthode 1 : avec Git
-
-Si le projet est disponible sur un dépôt Git, utiliser la commande suivante :
+## Clonage du dépôt Git
 
 ```bash
-git clone <url-du-repository>
-cd emergency-skills-plugin
+git clone https://github.com/gauthierwbl/emergency-skills-plugin.git
 ```
-
-### Méthode 2 : avec un fichier ZIP
-
-Si le projet est fourni sous forme d’archive ZIP :
-
-1. télécharger le fichier ZIP ;
-2. extraire le contenu ;
-3. ouvrir un terminal dans le dossier du projet.
-
-Exemple :
 
 ```bash
 cd emergency-skills-plugin
 ```
 
-## Structure attendue du projet
+---
 
-Après extraction ou clonage, le projet doit avoir une structure proche de celle-ci :
+# Structure attendue
 
 ```text
 emergency-skills-plugin/
 │
 ├── .claude/
 │   └── skills/
-│       ├── analyse_zone/
-│       ├── equipements_sensibles/
-│       ├── localisation_site/
-│       ├── meteo_urgence/
-│       └── risques_site/
 │
 ├── docs/
-│   ├── architecture.md
-│   ├── installation.md
-│   └── skills.md
 │
-├── agent_urgence.py
-├── demo.py
-├── requirements.txt
+├── tests/
+│
 ├── .env.example
+├── .gitignore
+├── agent_gemini.py
+├── requirements.txt
 └── README.md
 ```
 
-## Création d’un environnement virtuel
+---
 
-Il est recommandé d’utiliser un environnement virtuel Python.
+# Création d'un environnement virtuel
 
-Cela permet d’installer les dépendances du projet sans modifier l’installation globale de Python sur l’ordinateur.
+## Windows
 
-### Sous Windows
-
-Depuis la racine du projet :
-
-```bash
+```powershell
 python -m venv .venv
 ```
 
-Activer ensuite l’environnement virtuel :
+Activation :
 
-```bash
+```powershell
 .venv\Scripts\activate
 ```
 
-Si l’activation fonctionne, le terminal affiche généralement le nom de l’environnement :
+Le terminal doit afficher :
 
 ```text
 (.venv)
 ```
 
-### Sous Linux ou macOS
+---
 
-Depuis la racine du projet :
+## Linux / macOS
 
 ```bash
 python3 -m venv .venv
 ```
 
-Activer ensuite l’environnement virtuel :
+Activation :
 
 ```bash
 source .venv/bin/activate
 ```
 
-## Installation des dépendances
+---
 
-Une fois l’environnement virtuel activé, installer les dépendances avec :
+# Installation des dépendances
+
+Une fois l'environnement activé :
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Les principales dépendances du projet sont :
+Les principales bibliothèques utilisées sont :
 
 ```text
 requests
-langchain-core
 python-dotenv
+google-genai
+langchain-core
 ```
 
-Si le fichier `requirements.txt` contient beaucoup de dépendances inutiles, il peut être simplifié avec uniquement les bibliothèques réellement utilisées par le projet.
+---
 
-Exemple de `requirements.txt` minimal :
+# Configuration Gemini
 
-```txt
-requests
-langchain-core
-python-dotenv
-```
+Le projet utilise Gemini pour générer les synthèses.
 
-## Configuration du projet
-
-Le projet contient un fichier :
+Créer un fichier :
 
 ```text
-.env.example
+.env
 ```
 
-Ce fichier sert d’exemple pour les éventuelles variables d’environnement.
+à la racine du projet.
 
-Dans la version actuelle du projet, aucune clé API n’est obligatoire, car les APIs utilisées sont publiques.
-
-Il est toutefois possible de créer un fichier `.env` à partir du modèle.
-
-### Sous Windows PowerShell
-
-```powershell
-Copy-Item .env.example .env
-```
-
-### Sous Linux ou macOS
-
-```bash
-cp .env.example .env
-```
-
-Exemple de contenu possible pour le fichier `.env` :
+Contenu :
 
 ```env
-APP_ENV=development
-DEFAULT_RADIUS=500
+GEMINI_API_KEY=votre_cle_api
 ```
 
-## Lancement du projet
+---
 
-Pour lancer le projet, se placer à la racine du dossier :
+# Obtenir une clé Gemini
 
-```bash
-cd emergency-skills-plugin
-```
-
-Puis lancer l’agent principal :
-
-```bash
-python agent_urgence.py
-```
-
-Le programme peut ensuite recevoir une demande utilisateur.
-
-Exemple :
+1. Aller sur :
 
 ```text
-Analyse la zone 12 rue de la Paix Paris
+https://aistudio.google.com/app/apikey
 ```
 
-L’agent va alors appeler les skills nécessaires et retourner une analyse structurée de la zone.
+2. Se connecter avec un compte Google.
 
-## Tester les skills séparément
+3. Créer une clé API.
 
-Chaque skill peut également être lancé indépendamment depuis le terminal.
+4. Copier la clé dans le fichier `.env`.
 
-Cela permet de vérifier que chaque module fonctionne correctement.
+---
 
-## Test du skill `localisation_site`
+# Vérification de l'installation
 
-Ce skill permet de transformer une adresse en coordonnées GPS.
-
-Commande :
+Tester un skill simple :
 
 ```bash
-python .claude/skills/localisation_site/main.py "12 rue de la Paix Paris"
+python .claude/skills/meteo_urgence/main.py Paris
 ```
 
-Résultat attendu :
+Si un résultat JSON apparaît, l'installation fonctionne.
 
-```json
-{
-  "requete": "12 rue de la Paix Paris",
-  "adresse_trouvee": "12 Rue de la Paix 75002 Paris",
-  "commune": "Paris",
-  "code_postal": "75002",
-  "code_commune": "75102",
-  "latitude": 48.869,
-  "longitude": 2.331
-}
-```
+---
 
-## Test du skill `meteo_urgence`
+# Lancement de l'agent principal
 
-Ce skill permet de récupérer les conditions météo actuelles d’une ville.
-
-Commande :
+Depuis la racine du projet :
 
 ```bash
-python .claude/skills/meteo_urgence/main.py "Paris"
+python agent_gemini.py
 ```
 
-Résultat attendu :
+---
 
-```json
-{
-  "ville": "Paris",
-  "pays": "France",
-  "latitude": 48.8534,
-  "longitude": 2.3488,
-  "temperature": 14.3,
-  "vent_km_h": 12.5
-}
-```
+# Exemple d'utilisation
 
-## Test du skill `risques_site`
-
-Ce skill permet de rechercher les risques connus d’une commune à partir de son code INSEE.
-
-Commande :
-
-```bash
-python .claude/skills/risques_site/main.py 75102
-```
-
-Résultat attendu :
-
-```json
-{
-  "code_insee": "75102",
-  "api": "Géorisques",
-  "nombre_resultats": 4
-}
-```
-
-## Test du skill `equipements_sensibles`
-
-Ce skill permet de rechercher les équipements sensibles autour de coordonnées GPS.
-
-Commande :
-
-```bash
-python .claude/skills/equipements_sensibles/main.py 48.869 2.331 500
-```
-
-Dans cette commande :
-
-- `48.869` correspond à la latitude ;
-- `2.331` correspond à la longitude ;
-- `500` correspond au rayon de recherche en mètres.
-
-Résultat attendu :
-
-```json
-{
-  "centre": {
-    "latitude": 48.869,
-    "longitude": 2.331
-  },
-  "rayon_m": 500,
-  "nombre_equipements": 8,
-  "source": "OpenStreetMap / Overpass API"
-}
-```
-
-## Test du skill `analyse_zone`
-
-Ce skill lance l’analyse complète d’une zone.
-
-Commande :
-
-```bash
-python .claude/skills/analyse_zone/main.py "12 rue de la Paix Paris"
-```
-
-Résultat attendu :
-
-```json
-{
-  "requete": "12 rue de la Paix Paris",
-  "localisation": {},
-  "meteo": {},
-  "risques": {},
-  "equipements_sensibles": {}
-}
-```
-
-## Exemple d’utilisation complète
-
-Une fois le projet lancé avec :
-
-```bash
-python agent_urgence.py
-```
-
-L’utilisateur peut saisir :
-
-```text
-Analyse la zone 12 rue de la Paix Paris
-```
-
-Le programme exécute alors les étapes suivantes :
-
-1. recherche de l’adresse ;
-2. récupération des coordonnées GPS ;
-3. identification du code INSEE ;
-4. récupération des données météo ;
-5. recherche des risques connus ;
-6. recherche des équipements sensibles ;
-7. affichage d’une réponse structurée.
-
-## Problèmes fréquents
-
-## Python n’est pas reconnu
-
-Si la commande suivante ne fonctionne pas :
-
-```bash
-python --version
-```
-
-Vérifier que Python est bien installé et ajouté au PATH du système.
-
-Sous Windows, il peut être nécessaire de cocher l’option :
-
-```text
-Add Python to PATH
-```
-
-lors de l’installation.
-
-## Erreur avec les dépendances
-
-Si une dépendance est manquante, relancer :
-
-```bash
-pip install -r requirements.txt
-```
-
-Ou installer directement une bibliothèque précise :
-
-```bash
-pip install requests
-pip install langchain-core
-pip install python-dotenv
-```
-
-## Erreur avec l’environnement virtuel sous PowerShell
-
-Si PowerShell bloque l’activation de l’environnement virtuel, il peut afficher une erreur liée à la politique d’exécution.
-
-Dans ce cas, lancer PowerShell en tant qu’utilisateur et exécuter :
-
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-Puis réactiver l’environnement :
-
-```powershell
-.venv\Scripts\activate
-```
-
-## Adresse non trouvée
-
-Si une adresse n’est pas reconnue, essayer avec une adresse plus précise.
-
-Exemple conseillé :
+Entrée :
 
 ```text
 12 rue de la Paix Paris
 ```
 
-Éviter les adresses trop vagues comme :
+L'agent :
 
-```text
-Paris
+1. localise l'adresse ;
+2. récupère la météo ;
+3. consulte les risques ;
+4. recherche les équipements sensibles ;
+5. génère une synthèse Gemini.
+
+---
+
+# Tester les skills individuellement
+
+## Localisation
+
+```bash
+python .claude/skills/localisation_site/main.py "12 rue de la Paix Paris"
 ```
 
-pour les tests de géolocalisation précise.
+---
 
-## Erreur API
+## Météo
 
-Le projet dépend de plusieurs APIs externes.
+```bash
+python .claude/skills/meteo_urgence/main.py Paris
+```
 
-Une erreur peut venir :
+---
 
-- d’une absence de connexion Internet ;
-- d’une API temporairement indisponible ;
-- d’une limite de requêtes ;
-- d’une donnée inexistante pour la zone demandée ;
-- d’un format d’entrée incorrect.
+## Risques
 
-Dans ce cas, il faut vérifier :
+```bash
+python .claude/skills/risques_site/main.py 75102
+```
 
-1. la connexion Internet ;
-2. les paramètres fournis au script ;
-3. la disponibilité de l’API appelée.
+---
 
-## Bonnes pratiques
+## Équipements sensibles
 
-Pour garder un projet propre, il est conseillé de ne pas versionner certains fichiers.
+```bash
+python .claude/skills/equipements_sensibles/main.py 48.869141 2.331303 500
+```
 
-Le fichier `.gitignore` peut contenir :
+---
+
+## Analyse complète
+
+```bash
+python .claude/skills/analyse_zone/main.py "12 rue de la Paix Paris"
+```
+
+---
+
+# Problèmes fréquents
+
+## Python non reconnu
+
+Vérifier :
+
+```bash
+python --version
+```
+
+Si la commande échoue, ajouter Python au PATH.
+
+---
+
+## Environnement virtuel bloqué sous PowerShell
+
+Exécuter :
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+Puis réactiver :
+
+```powershell
+.venv\Scripts\activate
+```
+
+---
+
+## Clé Gemini absente
+
+Erreur typique :
+
+```text
+GEMINI_API_KEY manquante
+```
+
+Vérifier :
+
+* présence du fichier `.env` ;
+* nom exact de la variable ;
+* clé correctement copiée.
+
+---
+
+## API indisponible
+
+Certaines APIs publiques peuvent temporairement être indisponibles.
+
+Le projet dépend notamment de :
+
+* Open-Meteo ;
+* Géorisques ;
+* Overpass API ;
+* API Adresse Data Gouv.
+
+---
+
+# Bonnes pratiques Git
+
+Le fichier `.gitignore` doit contenir :
 
 ```gitignore
 .venv/
@@ -454,45 +303,42 @@ __pycache__/
 *.pyc
 ```
 
-Il est aussi conseillé de vérifier que les fichiers suivants sont bien présents avant de rendre le projet :
+Ne jamais envoyer :
+
+* `.env`
+* `.venv`
+* `__pycache__`
+
+sur GitHub.
+
+---
+
+# Vérifications avant rendu
+
+Les fichiers suivants doivent être présents :
 
 ```text
 README.md
 requirements.txt
 .env.example
-docs/architecture.md
-docs/installation.md
-docs/skills.md
-.claude/skills/*/SKILL.md
-.claude/skills/*/main.py
+
+docs/
+├── architecture.md
+├── installation.md
+└── skills.md
+
+.claude/skills/
 ```
 
-## Nettoyage avant rendu
+---
 
-Avant de rendre le projet, vérifier que le dossier ne contient pas :
+# Conclusion
 
-- l’environnement virtuel `.venv/` ;
-- les fichiers temporaires Python `__pycache__/` ;
-- un fichier `.env` contenant des informations personnelles ;
-- des fichiers inutiles générés automatiquement.
+L'installation du projet nécessite uniquement :
 
-La version rendue doit surtout contenir :
+1. Python ;
+2. les dépendances du projet ;
+3. une clé Gemini ;
+4. une connexion Internet.
 
-- le code source ;
-- la documentation ;
-- les fichiers de configuration utiles ;
-- les fichiers nécessaires à l’installation.
-
-## Conclusion
-
-L’installation du projet **Emergency Skills Plugin** est simple.
-
-Il suffit de :
-
-1. récupérer le projet ;
-2. créer un environnement virtuel ;
-3. installer les dépendances ;
-4. lancer `agent_urgence.py` ;
-5. tester l’analyse d’une adresse.
-
-Le projet peut ensuite être enrichi avec de nouveaux skills ou une interface plus complète.
+Une fois installé, l'agent Gemini est capable d'orchestrer plusieurs skills spécialisés afin de produire une analyse complète d'une zone à partir d'une simple adresse.
