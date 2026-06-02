@@ -2,62 +2,187 @@
 
 ## Présentation générale
 
-Le projet **Emergency Skills Plugin** repose sur une architecture modulaire basée sur des skills.
+Le projet **Emergency Skills Plugin** repose sur une architecture agentique modulaire.
 
-Chaque skill correspond à une capacité précise de l’assistant IA.  
-L’objectif est de permettre à l’agent de ne pas tout faire directement dans un seul fichier, mais d’appeler plusieurs modules spécialisés selon la demande utilisateur.
+L'objectif est de permettre à une intelligence artificielle de coordonner plusieurs outils spécialisés afin d'analyser rapidement une zone géographique dans un contexte d'urgence.
 
-Cette architecture permet de rendre le projet :
+Chaque fonctionnalité métier est encapsulée dans un skill indépendant, ce qui facilite la maintenance, les tests et les évolutions futures.
 
-- plus lisible ;
-- plus facile à maintenir ;
-- plus simple à faire évoluer ;
-- plus proche du fonctionnement d’un assistant IA agentique.
+---
 
-## Objectif de l’architecture
-
-L’architecture du projet a été pensée pour permettre à un assistant IA d’analyser rapidement une zone géographique dans un contexte d’urgence.
-
-À partir d’une simple adresse, l’agent peut :
-
-1. localiser le site ;
-2. récupérer les coordonnées GPS ;
-3. identifier la commune et son code INSEE ;
-4. récupérer les conditions météo actuelles ;
-5. consulter les risques connus sur la commune ;
-6. rechercher les équipements sensibles à proximité ;
-7. regrouper les résultats dans une synthèse exploitable.
-
-## Schéma global
+# Architecture générale
 
 ```text
 Utilisateur
-   │
-   │ Demande en langage naturel
-   ↓
-agent_urgence.py
-   │
-   │ Appel du skill principal
-   ↓
+      ↓
+agent_gemini.py
+      ↓
 analyse_zone
-   │
-   ├── localisation_site
-   │       └── API Adresse data.gouv.fr
-   │
-   ├── meteo_urgence
-   │       └── Open-Meteo
-   │
-   ├── vigilance_meteo
-   │       └── Open-Meteo
-   │
-   ├── risques_site
-   │       └── API Géorisques
-   │
-   └── equipements_sensibles
-           └── OpenStreetMap / Overpass API
+      ↓
+├── localisation_site
+├── meteo_urgence
+├── risques_site
+└── equipements_sensibles
 ```
 
-## Structure des dossiers
+---
+
+# Rôle des composants
+
+## Agent Gemini
+
+L'agent principal du projet est :
+
+```text
+agent_gemini.py
+```
+
+Il joue le rôle d'orchestrateur.
+
+Ses responsabilités sont :
+
+* recevoir la demande utilisateur ;
+* lancer les analyses nécessaires ;
+* récupérer les résultats retournés par les skills ;
+* transmettre les données à Gemini ;
+* générer une synthèse compréhensible pour un utilisateur.
+
+L'agent constitue le point d'entrée principal du projet.
+
+---
+
+## Skill analyse_zone
+
+Le skill :
+
+```text
+analyse_zone
+```
+
+est le skill central.
+
+Il coordonne plusieurs traitements :
+
+1. géolocalisation ;
+2. récupération météo ;
+3. analyse des risques ;
+4. recherche des équipements sensibles.
+
+Il regroupe ensuite les résultats dans une structure JSON unique.
+
+---
+
+## Skill localisation_site
+
+Responsable de :
+
+* convertir une adresse en coordonnées GPS ;
+* récupérer :
+
+  * latitude ;
+  * longitude ;
+  * commune ;
+  * code postal ;
+  * code INSEE.
+
+API utilisée :
+
+```text
+API Adresse Data Gouv
+```
+
+---
+
+## Skill meteo_urgence
+
+Responsable de :
+
+* récupérer la température ;
+* récupérer la vitesse du vent ;
+* récupérer les précipitations ;
+* récupérer les informations météo utiles à l'analyse.
+
+API utilisée :
+
+```text
+Open-Meteo
+```
+
+---
+
+## Skill risques_site
+
+Responsable de :
+
+* rechercher les risques territoriaux connus ;
+* récupérer les informations Géorisques ;
+* analyser une commune à partir de son code INSEE.
+
+API utilisée :
+
+```text
+Géorisques
+```
+
+---
+
+## Skill equipements_sensibles
+
+Responsable de :
+
+* rechercher les équipements proches ;
+* identifier :
+
+  * hôpitaux ;
+  * pharmacies ;
+  * écoles ;
+  * services de police ;
+  * casernes de pompiers ;
+  * cliniques.
+
+API utilisée :
+
+```text
+OpenStreetMap / Overpass API
+```
+
+---
+
+# Workflow complet
+
+Lorsqu'un utilisateur saisit :
+
+```text
+12 rue de la Paix Paris
+```
+
+le système exécute les étapes suivantes :
+
+```text
+Adresse utilisateur
+        ↓
+analyse_zone
+        ↓
+localisation_site
+        ↓
+Coordonnées GPS
+        ↓
+meteo_urgence
+        ↓
+risques_site
+        ↓
+equipements_sensibles
+        ↓
+Résultat JSON
+        ↓
+Gemini
+        ↓
+Synthèse finale
+```
+
+---
+
+# Structure du projet
 
 ```text
 emergency-skills-plugin/
@@ -65,408 +190,158 @@ emergency-skills-plugin/
 ├── .claude/
 │   └── skills/
 │       ├── analyse_zone/
-│       │   ├── main.py
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │
 │       ├── equipements_sensibles/
-│       │   ├── main.py
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │
 │       ├── localisation_site/
-│       │   ├── main.py
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │
 │       ├── meteo_urgence/
-│       │   ├── main.py
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │
 │       └── risques_site/
-│           ├── main.py
-│           ├── SKILL.md
-│           └── references/
 │
 ├── docs/
 │   ├── architecture.md
 │   ├── installation.md
 │   └── skills.md
 │
-├── agent_urgence.py
-├── demo.py
-├── requirements.txt
+├── tests/
+│
+├── .env
 ├── .env.example
+├── .gitignore
+├── agent_gemini.py
+├── requirements.txt
 └── README.md
 ```
 
-## Rôle des principaux fichiers
+---
 
-### `agent_urgence.py`
+# Communication entre les composants
 
-Le fichier `agent_urgence.py` est le point d’entrée principal du projet.
+Le projet repose sur une communication simple entre les différents modules.
 
-Il sert à faire le lien entre la demande utilisateur et les skills disponibles.  
-Il reçoit une demande en langage naturel, puis déclenche les traitements adaptés.
-
-Son rôle est de :
-
-- recevoir une demande utilisateur ;
-- appeler le bon skill ;
-- récupérer les résultats ;
-- afficher une réponse structurée.
-
-Dans le projet, il permet notamment d’appeler l’analyse complète d’une zone à partir d’une adresse.
-
-### `demo.py`
-
-Le fichier `demo.py` peut servir à montrer rapidement le fonctionnement du projet.
-
-Il peut être utilisé pour tester un scénario simple sans passer par une utilisation complète de l’agent.
-
-### `.claude/skills/`
-
-Le dossier `.claude/skills/` contient l’ensemble des skills du projet.
-
-Chaque sous-dossier correspond à un skill indépendant.
-
-Exemple :
+Principe :
 
 ```text
-.claude/skills/localisation_site/
-```
-
-Chaque skill possède généralement :
-
-```text
+agent_gemini.py
+        ↓
+appel du skill
+        ↓
 main.py
-SKILL.md
-references/
+        ↓
+API externe
+        ↓
+JSON
+        ↓
+agent_gemini.py
+        ↓
+Gemini
+        ↓
+Synthèse
 ```
 
-### `main.py`
+Chaque skill reste indépendant et peut être exécuté seul.
 
-Le fichier `main.py` contient le code Python du skill.
+---
 
-Il est responsable de :
+# APIs utilisées
 
-- récupérer les paramètres d’entrée ;
-- appeler une API si nécessaire ;
-- traiter les données reçues ;
-- retourner un résultat structuré, souvent au format JSON.
+## API Adresse Data Gouv
 
-### `SKILL.md`
+Utilisée pour :
 
-Le fichier `SKILL.md` décrit le fonctionnement du skill pour l’assistant IA.
+* géocoder une adresse ;
+* récupérer les coordonnées GPS ;
+* récupérer les informations administratives.
 
-Il précise généralement :
+---
 
-- le nom du skill ;
-- son objectif ;
-- les cas où il doit être utilisé ;
-- la manière de l’exécuter ;
-- les données attendues en entrée ;
-- les données retournées en sortie.
+## Open-Meteo
 
-### `references/`
+Utilisée pour :
 
-Le dossier `references/` peut contenir des informations complémentaires utiles au skill.
+* température ;
+* vent ;
+* pluie ;
+* précipitations.
 
-Il peut servir à stocker :
+---
 
-- de la documentation ;
-- des exemples ;
-- des notes techniques ;
-- des références d’API ;
-- des fichiers utiles au fonctionnement ou à la compréhension du skill.
+## Géorisques
 
-### `docs/`
+Utilisée pour :
 
-Le dossier `docs/` contient la documentation générale du projet.
+* risques naturels ;
+* risques technologiques ;
+* informations territoriales.
 
-Il est composé de plusieurs fichiers :
+---
 
-| Fichier | Rôle |
-|---|---|
-| `architecture.md` | Explique l’organisation technique du projet |
-| `installation.md` | Explique comment installer et lancer le projet |
-| `skills.md` | Présente les skills disponibles et leur fonctionnement |
+## OpenStreetMap / Overpass API
 
-## Principe de fonctionnement
+Utilisée pour :
 
-Le projet fonctionne en plusieurs étapes.
+* hôpitaux ;
+* pharmacies ;
+* écoles ;
+* police ;
+* pompiers ;
+* équipements sensibles.
 
-Lorsqu’un utilisateur demande une analyse de zone, par exemple :
+---
 
-```text
-Analyse la zone 12 rue de la Paix Paris
-```
+# Avantages de cette architecture
 
-L’agent va lancer une chaîne de traitements.
+## Modularité
 
-## Étape 1 : réception de la demande
+Chaque skill est indépendant.
 
-L’utilisateur saisit une adresse ou une demande en langage naturel.
+## Réutilisabilité
 
-Exemple :
+Les skills peuvent être utilisés seuls ou combinés.
 
-```text
-Analyse la zone 12 rue de la Paix Paris
-```
+## Maintenabilité
 
-Cette demande est reçue par `agent_urgence.py`.
+Chaque fonctionnalité est isolée.
 
-## Étape 2 : appel du skill principal
+## Évolutivité
 
-L’agent appelle le skill principal `analyse_zone`.
+De nouveaux skills peuvent être ajoutés facilement.
 
-Ce skill est responsable de coordonner les autres skills du projet.
+## Approche agentique
 
-Il ne se limite pas à une seule API : il regroupe plusieurs sources d’information pour produire une analyse complète.
+L'agent utilise plusieurs outils spécialisés pour répondre à une demande complexe.
 
-## Étape 3 : localisation du site
+---
 
-Le skill `analyse_zone` commence par appeler le skill `localisation_site`.
+# Limites actuelles
 
-Ce skill transforme l’adresse en informations géographiques.
+Le projet reste un prototype universitaire.
 
-Il récupère notamment :
+Certaines limites existent :
 
-- l’adresse trouvée ;
-- la commune ;
-- le code postal ;
-- le code INSEE ;
-- la latitude ;
-- la longitude.
+* dépendance aux APIs publiques ;
+* absence de cache ;
+* absence de base de données ;
+* absence d'interface graphique ;
+* appels synchrones ;
+* dépendance à une connexion Internet.
 
-Ces informations sont indispensables pour les autres traitements.
+---
 
-## Étape 4 : récupération de la météo
+# Perspectives d'évolution
 
-Une fois la localisation obtenue, le projet peut récupérer les conditions météorologiques actuelles.
+Plusieurs améliorations sont envisageables :
 
-Le skill `meteo_urgence` permet d’obtenir des données comme :
+* génération automatique de rapports PDF ;
+* calcul d'un score de criticité ;
+* visualisation cartographique ;
+* interface web ;
+* historisation des analyses ;
+* architecture multi-agents ;
+* intégration de nouvelles sources de données ;
+* analyse de plusieurs zones simultanément.
 
-- la température ;
-- la vitesse du vent ;
-- les précipitations ;
-- la pluie éventuelle.
+---
 
-Ces informations peuvent être importantes dans un contexte d’urgence, car la météo peut aggraver certaines situations.
+# Conclusion
 
-## Étape 5 : recherche des risques connus
+L'architecture du projet repose sur une séparation claire entre l'agent, les skills et les sources de données.
 
-Le skill `risques_site` utilise le code INSEE de la commune pour rechercher les risques connus.
-
-Il peut permettre d’identifier des risques comme :
-
-- les inondations ;
-- les mouvements de terrain ;
-- les risques sismiques ;
-- les risques industriels ;
-- le retrait-gonflement des argiles ;
-- les cavités souterraines.
-
-Ces informations permettent d’avoir une première vision du contexte territorial.
-
-## Étape 6 : recherche des équipements sensibles
-
-Le skill `equipements_sensibles` utilise les coordonnées GPS du site pour rechercher les équipements sensibles situés à proximité.
-
-Il peut rechercher des lieux comme :
-
-- les hôpitaux ;
-- les pharmacies ;
-- les écoles ;
-- les casernes de pompiers ;
-- les postes de police ;
-- les cliniques.
-
-Ces informations peuvent aider à identifier les lieux vulnérables ou utiles autour de la zone analysée.
-
-## Étape 7 : regroupement des résultats
-
-Une fois les différents skills exécutés, le projet regroupe les résultats dans une réponse structurée.
-
-Le résultat final peut contenir :
-
-```json
-{
-  "requete": "12 rue de la Paix Paris",
-  "localisation": {},
-  "meteo": {},
-  "risques": {},
-  "equipements_sensibles": {}
-}
-```
-
-Cette structure rend les résultats facilement exploitables par :
-
-- un assistant IA ;
-- une interface web ;
-- un script ;
-- un futur système de génération de rapport.
-
-## Communication entre les composants
-
-Les différents composants communiquent principalement à travers des appels de scripts Python.
-
-Le principe général est le suivant :
-
-```text
-agent_urgence.py
-   ↓
-appel d’un script Python
-   ↓
-main.py du skill concerné
-   ↓
-appel éventuel à une API externe
-   ↓
-résultat JSON
-   ↓
-retour à l’agent
-```
-
-Cette approche permet à chaque skill de rester indépendant.
-
-## APIs externes utilisées
-
-### API Adresse data.gouv.fr
-
-Cette API permet de convertir une adresse française en coordonnées GPS.
-
-Elle est utilisée par le skill :
-
-```text
-localisation_site
-```
-
-Elle permet de récupérer :
-
-- une adresse normalisée ;
-- une commune ;
-- un code postal ;
-- un code INSEE ;
-- une latitude ;
-- une longitude.
-
-### Open-Meteo
-
-Open-Meteo permet de récupérer des données météorologiques actuelles.
-
-Elle est utilisée par le skill :
-
-```text
-meteo_urgence
-```
-
-Elle permet de récupérer :
-
-- la température ;
-- le vent ;
-- les précipitations ;
-- certaines informations météo utiles à l’analyse.
-
-### Géorisques
-
-Géorisques permet d’obtenir des informations sur les risques naturels et technologiques connus.
-
-Elle est utilisée par le skill :
-
-```text
-risques_site
-```
-
-Elle permet de récupérer des informations liées à une commune française à partir de son code INSEE.
-
-### OpenStreetMap / Overpass API
-
-Overpass API permet d’interroger les données OpenStreetMap.
-
-Elle est utilisée par le skill :
-
-```text
-equipements_sensibles
-```
-
-Elle permet de rechercher des équipements autour d’une position GPS.
-
-## Avantages de cette architecture
-
-Cette architecture présente plusieurs avantages.
-
-### Modularité
-
-Chaque skill est séparé dans son propre dossier.
-
-Cela permet de modifier un skill sans impacter directement les autres.
-
-### Lisibilité
-
-Le projet est plus facile à comprendre, car chaque partie a un rôle précis.
-
-Par exemple :
-
-- un skill pour la localisation ;
-- un skill pour la météo ;
-- un skill pour les risques ;
-- un skill pour les équipements sensibles.
-
-### Évolutivité
-
-Il est possible d’ajouter de nouveaux skills sans réécrire toute l’application.
-
-Par exemple, on pourrait ajouter :
-
-- un skill de vigilance météo ;
-- un skill de génération de rapport PDF ;
-- un skill de cartographie ;
-- un skill d’analyse de criticité.
-
-### Réutilisabilité
-
-Un skill peut être utilisé seul ou dans une analyse complète.
-
-Par exemple, `localisation_site` peut être utilisé indépendamment de `analyse_zone`.
-
-### Maintenance facilitée
-
-En cas d’erreur sur une API ou sur un traitement, il est plus simple d’identifier le skill concerné.
-
-## Limites de l’architecture actuelle
-
-L’architecture actuelle reste celle d’un prototype universitaire.
-
-Elle présente donc certaines limites :
-
-- les appels API sont dépendants d’une connexion Internet ;
-- il n’y a pas encore de cache local ;
-- il n’y a pas de base de données ;
-- la gestion des erreurs reste simple ;
-- les résultats ne sont pas affichés sur une carte ;
-- l’interface utilisateur est limitée ;
-- les appels sont principalement synchrones.
-
-## Améliorations possibles
-
-Plusieurs améliorations pourraient être apportées :
-
-- ajouter une interface web ;
-- afficher les résultats sur une carte interactive ;
-- ajouter un système de cache pour éviter les appels API répétés ;
-- améliorer la gestion des erreurs ;
-- ajouter une base de données pour historiser les analyses ;
-- créer une génération automatique de rapports PDF ;
-- intégrer les vigilances météo officielles ;
-- ajouter un score de criticité de la zone ;
-- enrichir les équipements sensibles recherchés ;
-- permettre l’analyse de plusieurs adresses en une seule fois.
-
-## Conclusion
-
-L’architecture du projet **Emergency Skills Plugin** repose sur une séparation claire des responsabilités.
-
-Chaque skill possède une mission précise, ce qui rend le projet plus propre, plus maintenable et plus facilement extensible.
-
-Cette organisation illustre le fonctionnement d’un assistant IA agentique capable d’orchestrer plusieurs outils spécialisés pour produire une analyse rapide et structurée d’une zone dans un contexte d’urgence.
+Cette organisation permet de construire un système flexible, évolutif et facilement maintenable, tout en illustrant les principes modernes des architectures agentiques basées sur des outils spécialisés.
