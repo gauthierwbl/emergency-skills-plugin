@@ -35,6 +35,7 @@ def collecter_donnees(adresse: str) -> dict:
     """
     Agent de collecte.
     Récupère toutes les données nécessaires à partir d'une adresse.
+    Génère aussi une carte interactive de la zone.
     """
 
     donnees = run_script(
@@ -42,7 +43,13 @@ def collecter_donnees(adresse: str) -> dict:
         [adresse]
     )
 
+    carte = run_script(
+        ".claude/skills/cartographie_zone/main.py",
+        [adresse]
+    )
+
     return {
         "adresse_demandee": adresse,
-        "donnees_collectees": donnees
+        "donnees_collectees": donnees,
+        "carte": carte
     }

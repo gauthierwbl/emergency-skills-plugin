@@ -33,6 +33,7 @@ def synthese_locale(demande: str, collecte: dict, analyse: dict) -> str:
     localisation = donnees.get("localisation", {})
     meteo = donnees.get("meteo", {})
     equipements = donnees.get("equipements_sensibles", {})
+    carte = collecte.get("carte", {})
 
     lignes.append("")
     lignes.append("Informations principales :")
@@ -41,6 +42,10 @@ def synthese_locale(demande: str, collecte: dict, analyse: dict) -> str:
     lignes.append(f"- Température : {meteo.get('temperature')} °C")
     lignes.append(f"- Vent : {meteo.get('vent_km_h')} km/h")
     lignes.append(f"- Équipements trouvés : {equipements.get('nombre_equipements')}")
+    if carte:
+        lignes.append("")
+        lignes.append("Carte générée :")
+        lignes.append(f"- Fichier : {carte.get('carte_generee')}")
 
     return "\n".join(lignes)
 
@@ -67,6 +72,7 @@ Rédige une synthèse claire en français avec :
 4. risques et points sensibles ;
 5. niveau de vigilance ;
 6. meilleure démarche à suivre.
+7. carte générée (si disponible)
 
 Sois clair, opérationnel et prudent.
 Précise que les données doivent être confirmées avec les sources officielles.
