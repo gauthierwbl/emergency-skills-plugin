@@ -1,37 +1,43 @@
 # Emergency Skills Plugin
 
-Projet universitaire visant à créer un système de skills pour assistant IA agentique, capable d’analyser rapidement une zone dans un contexte d’urgence à partir de plusieurs APIs publiques.
+Projet universitaire visant à créer un système de skills pour assistant IA agentique, capable d'analyser rapidement une zone dans un contexte d'urgence grâce à plusieurs APIs publiques.
 
-## Objectif du projet
+---
 
-Ce projet permet à un assistant IA d’orchestrer plusieurs outils spécialisés afin de produire une première analyse opérationnelle d’une zone.
+# Objectif du projet
 
-À partir d’une adresse, le système peut :
+Ce projet a pour objectif de démontrer comment un assistant IA peut orchestrer plusieurs outils spécialisés afin de produire une analyse rapide et contextualisée d'une zone géographique.
 
-- localiser le site ;
-- récupérer les conditions météo actuelles ;
-- identifier les risques naturels ou technologiques connus ;
-- rechercher des équipements sensibles à proximité ;
-- générer une synthèse exploitable dans un contexte d’urgence.
+À partir d'une adresse, le système est capable de :
 
-L’objectif n’est pas de remplacer les services de secours ou les outils officiels, mais de démontrer comment un assistant IA peut agréger rapidement différentes sources d’information publiques.
+* localiser précisément le site ;
+* récupérer les conditions météorologiques actuelles ;
+* identifier les risques territoriaux connus ;
+* rechercher les équipements sensibles à proximité ;
+* produire une synthèse rédigée par une intelligence artificielle.
 
-## Architecture globale
+L'objectif n'est pas de remplacer les services de secours ou les plateformes officielles, mais de montrer comment une architecture agentique peut agréger efficacement différentes sources d'information publiques.
+
+---
+
+# Architecture globale
 
 ```text
 Utilisateur
-   ↓
-agent_urgence.py
-   ↓
+      ↓
+agent_gemini.py
+      ↓
 analyse_zone
-   ↓
+      ↓
 ├── localisation_site
 ├── meteo_urgence
 ├── risques_site
 └── equipements_sensibles
 ```
 
-## Structure du projet
+---
+
+# Architecture du projet
 
 ```text
 emergency-skills-plugin/
@@ -39,221 +45,329 @@ emergency-skills-plugin/
 ├── .claude/
 │   └── skills/
 │       ├── analyse_zone/
-│       │   ├── main.py
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │
 │       ├── equipements_sensibles/
-│       │   ├── main.py
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │
 │       ├── localisation_site/
-│       │   ├── main.py
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │
 │       ├── meteo_urgence/
-│       │   ├── main.py
-│       │   ├── SKILL.md
-│       │   └── references/
-│       │
 │       └── risques_site/
-│           ├── main.py
-│           ├── SKILL.md
-│           └── references/
 │
 ├── docs/
 │   ├── architecture.md
 │   ├── installation.md
 │   └── skills.md
 │
-├── agent_urgence.py
-├── demo.py
-├── requirements.txt
+├── tests/
+│
 ├── .env.example
+├── .gitignore
+├── agent_gemini.py
+├── requirements.txt
 └── README.md
 ```
 
-## Fonctionnement général
+---
 
-Le projet fonctionne autour d’un agent principal : `agent_urgence.py`.
+# Fonctionnement général
 
-Cet agent reçoit une demande utilisateur, par exemple une adresse à analyser, puis appelle les différents skills nécessaires.
+Le projet repose sur un agent principal : `agent_gemini.py`.
 
-Le skill principal est `analyse_zone`. Il orchestre les autres skills pour produire une analyse complète :
+Cet agent reçoit une demande utilisateur, exécute le skill principal `analyse_zone`, récupère les informations provenant de plusieurs APIs puis utilise Gemini pour produire une synthèse rédigée et contextualisée.
 
-1. localisation de l’adresse ;
-2. récupération des coordonnées GPS ;
-3. récupération des données météo ;
-4. recherche des risques connus ;
-5. recherche des équipements sensibles à proximité ;
-6. génération d’un résultat structuré.
+Workflow :
 
-## Skills disponibles
+1. saisie d'une adresse ;
+2. géolocalisation ;
+3. récupération des coordonnées GPS ;
+4. récupération des données météo ;
+5. récupération des risques territoriaux ;
+6. recherche des équipements sensibles ;
+7. génération d'une synthèse par Gemini.
 
-| Skill | Rôle |
-|---|---|
-| `analyse_zone` | Lance l’analyse complète d’une adresse |
-| `localisation_site` | Transforme une adresse en coordonnées GPS |
-| `meteo_urgence` | Récupère les données météo actuelles |
-| `vigilance_meteo` | Estime un niveau de vigilance météo à partir des conditions actuelles |
-| `risques_site` | Identifie les risques connus d’une commune |
-| `equipements_sensibles` | Recherche les équipements sensibles à proximité |
+---
 
-## APIs utilisées
+# Agent IA Gemini
 
-Le projet s’appuie sur plusieurs APIs publiques.
+Le projet utilise Gemini comme agent décisionnel.
 
-| API | Utilisation |
-|---|---|
-| API Adresse data.gouv.fr | Géolocalisation d’une adresse française |
-| Open-Meteo | Récupération des données météo actuelles |
-| Géorisques | Identification des risques naturels et technologiques |
-| OpenStreetMap / Overpass API | Recherche d’équipements sensibles à proximité |
-| Open-Meteo | Récupération de la météo actuelle et estimation d’une vigilance météo |
+L'agent :
 
-## Installation
+* interprète la demande utilisateur ;
+* exécute les skills nécessaires ;
+* agrège les données retournées ;
+* produit une synthèse en langage naturel ;
+* estime un niveau de vigilance ;
+* formule des recommandations.
 
-### Prérequis
+Cette approche permet de combiner des données structurées avec les capacités de synthèse d'un modèle de langage.
 
-Avant de lancer le projet, il faut disposer de :
+---
 
-- Python 3.10 ou supérieur ;
-- pip ;
-- une connexion Internet.
+# Skills disponibles
 
-### Installation des dépendances
+| Skill                 | Description                                     |
+| --------------------- | ----------------------------------------------- |
+| analyse_zone          | Lance une analyse complète d'une adresse        |
+| localisation_site     | Transforme une adresse en coordonnées GPS       |
+| meteo_urgence         | Récupère les conditions météo actuelles         |
+| risques_site          | Recherche les risques connus d'une commune      |
+| equipements_sensibles | Recherche les équipements sensibles à proximité |
 
-Depuis la racine du projet, exécuter la commande suivante :
+---
+
+# APIs utilisées
+
+## API Adresse Data Gouv
+
+Utilisée pour :
+
+* géocoder une adresse ;
+* récupérer les coordonnées GPS ;
+* récupérer les informations administratives.
+
+Documentation :
+
+https://adresse.data.gouv.fr/
+
+---
+
+## Open-Meteo
+
+Utilisée pour :
+
+* température ;
+* vitesse du vent ;
+* pluie ;
+* précipitations.
+
+Documentation :
+
+https://open-meteo.com/
+
+---
+
+## Géorisques
+
+Utilisée pour :
+
+* risques naturels ;
+* risques technologiques ;
+* informations territoriales.
+
+Documentation :
+
+https://www.georisques.gouv.fr/
+
+---
+
+## OpenStreetMap / Overpass API
+
+Utilisée pour :
+
+* hôpitaux ;
+* pharmacies ;
+* écoles ;
+* services de police ;
+* casernes de pompiers ;
+* équipements sensibles.
+
+Documentation :
+
+https://overpass-api.de/
+
+---
+
+# Installation
+
+## Prérequis
+
+* Python 3.10 ou supérieur
+* Connexion Internet
+* Clé API Gemini
+
+---
+
+## Cloner le dépôt
+
+```bash
+git clone https://github.com/gauthierwbl/emergency-skills-plugin.git
+```
+
+```bash
+cd emergency-skills-plugin
+```
+
+---
+
+## Créer un environnement virtuel
+
+```bash
+python -m venv .venv
+```
+
+### Windows
+
+```bash
+.venv\Scripts\activate
+```
+
+### Linux / macOS
+
+```bash
+source .venv/bin/activate
+```
+
+---
+
+## Installer les dépendances
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Lancement du projet
+---
 
-Depuis la racine du projet, lancer l’agent principal :
+## Configuration Gemini
+
+Créer un fichier `.env` à la racine du projet :
+
+```env
+GEMINI_API_KEY=votre_cle_api
+```
+
+Le fichier `.env` ne doit jamais être envoyé sur GitHub.
+
+Le fichier `.env.example` sert de modèle.
+
+---
+
+# Lancement du projet
+
+Depuis la racine du projet :
 
 ```bash
-python agent_urgence.py
+python agent_gemini.py
 ```
 
-L’utilisateur peut ensuite saisir une demande comme :
+Exemple :
 
 ```text
-Analyse la zone 12 rue de la Paix Paris
+12 rue de la Paix Paris
 ```
 
-Le programme exécute alors les différents skills et retourne une analyse structurée.
+L'agent :
 
-## Tester les skills séparément
+* collecte les données ;
+* exécute les skills ;
+* génère une synthèse opérationnelle.
 
-Chaque skill peut aussi être testé indépendamment.
+---
 
-### Localisation d’une adresse
+# Tester les skills individuellement
+
+## Localisation
 
 ```bash
 python .claude/skills/localisation_site/main.py "12 rue de la Paix Paris"
 ```
 
-### Analyse météo
+## Météo
 
 ```bash
-python .claude/skills/meteo_urgence/main.py "Paris"
+python .claude/skills/meteo_urgence/main.py Paris
 ```
 
-### Recherche des risques
+## Risques
 
 ```bash
 python .claude/skills/risques_site/main.py 75102
 ```
 
-### Recherche des équipements sensibles
+## Équipements sensibles
 
 ```bash
-python .claude/skills/equipements_sensibles/main.py 48.869 2.331 500
+python .claude/skills/equipements_sensibles/main.py 48.869141 2.331303 500
 ```
 
-### Analyse complète d’une zone
+## Analyse complète
 
 ```bash
 python .claude/skills/analyse_zone/main.py "12 rue de la Paix Paris"
 ```
 
-## Exemple de sortie attendue
+---
 
-Le résultat est retourné sous forme de données structurées, généralement au format JSON.
+# Exemple de workflow
 
-Exemple simplifié :
-
-```json
-{
-  "requete": "12 rue de la Paix Paris",
-  "localisation": {
-    "adresse_trouvee": "12 Rue de la Paix 75002 Paris",
-    "commune": "Paris",
-    "code_postal": "75002",
-    "code_commune": "75102",
-    "latitude": 48.869,
-    "longitude": 2.331
-  },
-  "meteo": {
-    "temperature": 14.3,
-    "vent_km_h": 12.5,
-    "precipitation_mm": 0
-  },
-  "risques": {
-    "api": "Géorisques",
-    "nombre_resultats": 4
-  },
-  "equipements_sensibles": {
-    "nombre_equipements": 8,
-    "source": "OpenStreetMap / Overpass API"
-  }
-}
+```text
+Demande utilisateur
+        ↓
+Analyse d'une adresse
+        ↓
+Localisation
+        ↓
+Météo
+        ↓
+Risques
+        ↓
+Équipements sensibles
+        ↓
+Synthèse Gemini
 ```
 
-## Documentation
+---
 
-La documentation complète du projet est disponible dans le dossier `docs/`.
+# Documentation
 
-| Fichier | Contenu |
-|---|---|
-| `docs/architecture.md` | Explication de l’architecture du projet |
-| `docs/installation.md` | Procédure d’installation et de lancement |
-| `docs/skills.md` | Description détaillée des skills |
+Une documentation détaillée est disponible dans le dossier `docs`.
 
-## Limites du projet
+| Fichier              | Description                     |
+| -------------------- | ------------------------------- |
+| docs/architecture.md | Architecture générale du projet |
+| docs/installation.md | Guide d'installation            |
+| docs/skills.md       | Documentation des skills        |
+
+---
+
+# Limites du projet
 
 Ce projet est un prototype universitaire.
 
-Il présente plusieurs limites :
+Les résultats dépendent :
 
-- les résultats dépendent de la disponibilité des APIs externes ;
-- certaines données peuvent être incomplètes ou non mises à jour ;
-- les informations issues d’OpenStreetMap dépendent de données collaboratives ;
-- certaines APIs publiques, notamment Overpass API, peuvent parfois répondre lentement ou retourner une erreur temporaire sur des zones très denses comme Paris ;
-- le système fonctionne correctement sur d’autres zones, mais cette limite est liée à la disponibilité des services externes ;
-- l’analyse produite ne doit pas être utilisée comme seule source dans une vraie situation d’urgence ;
-- le système ne remplace pas les autorités, les services de secours ou les outils officiels de gestion de crise.
+* de la disponibilité des APIs publiques ;
+* de la qualité des données OpenStreetMap ;
+* de la disponibilité des services Géorisques ;
+* des limitations de quota des APIs utilisées.
 
-## Améliorations possibles
+Certaines APIs, notamment Overpass API, peuvent occasionnellement répondre lentement ou retourner une erreur temporaire sur des zones très denses.
 
-Plusieurs évolutions peuvent être envisagées :
+Les résultats fournis ne doivent pas être utilisés comme unique source d'information dans une situation d'urgence réelle.
 
-- ajouter une interface web ;
-- afficher les résultats sur une carte interactive ;
-- générer automatiquement un rapport PDF ;
-- ajouter un score de criticité ;
-- améliorer la gestion des erreurs API ;
-- ajouter un système de cache ;
-- intégrer les vigilances météo officielles ;
-- historiser les analyses effectuées ;
-- produire une synthèse plus lisible pour un utilisateur non technique.
+---
 
-## Conclusion
+# Perspectives d'amélioration
 
-Ce projet montre comment un assistant IA peut utiliser plusieurs skills spécialisés pour analyser rapidement une zone dans un contexte d’urgence.
+Les évolutions suivantes sont envisagées :
 
-L’approche modulaire permet de séparer les responsabilités, de faciliter la maintenance et d’ajouter facilement de nouvelles capacités à l’agent.
+* génération automatique de rapports PDF ;
+* calcul d'un score de criticité ;
+* visualisation cartographique ;
+* interface web ;
+* historisation des analyses ;
+* ajout de nouvelles sources de données ;
+* architecture multi-agents ;
+* génération de recommandations avancées.
+
+---
+
+# Conclusion
+
+Ce projet met en œuvre une architecture agentique moderne combinant :
+
+* un agent IA (Gemini) ;
+* des skills spécialisés ;
+* plusieurs APIs publiques ;
+* une logique d'orchestration.
+
+L'approche modulaire facilite la maintenance, la réutilisation des composants et l'ajout de nouvelles fonctionnalités.
+
+Le projet illustre concrètement les concepts de skills, d'agents, de workflows et d'orchestration d'outils dans un contexte d'analyse territoriale et d'aide à la décision.
