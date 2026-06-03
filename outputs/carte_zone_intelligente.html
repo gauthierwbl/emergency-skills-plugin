@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_b38c27bd7619663d2e01a103f4eb5951 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+    <div style="
+        position: fixed;
+        bottom: 40px;
+        left: 40px;
+        z-index: 9999;
+        background-color: white;
+        padding: 12px;
+        border: 2px solid #444;
+        border-radius: 8px;
+        font-size: 14px;
+        box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+    ">
+        <b>Légende - Cartographie intelligente</b><br><br>
+        <span style="color:red;">●</span> Zone proche ou critique<br>
+        <span style="color:orange;">●</span> Zone de vigilance<br>
+        <span style="color:green;">●</span> Équipement utile éloigné<br>
+        <span style="color:blue;">●</span> École / établissement sensible<br>
+        <span style="color:darkblue;">●</span> Police<br>
+        <span style="color:red;">●</span> Hôpital / clinique<br>
+        <br>
+        Cercle rouge : périmètre 500 m<br>
+        Cercle orange : vigilance 250 m
+    </div>
+    
+    
+            <div class="folium-map" id="map_b38c27bd7619663d2e01a103f4eb5951" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_b38c27bd7619663d2e01a103f4eb5951 = L.map(
+                "map_b38c27bd7619663d2e01a103f4eb5951",
+                {
+                    center: [48.869141, 2.331303],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 16,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_4787dc16eab07fb6cdcfca38cd25ac8e = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_4787dc16eab07fb6cdcfca38cd25ac8e.addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var marker_ef1aace33a5d1dd049ebd2ca82b24b25 = L.marker(
+                [48.869141, 2.331303],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_dad47828c64b6f812bded7ebbf8ffe9e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_30e5e72415839644a3b969c8084715e5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0faebda4fd81c04283a1e40747f268d2 = $(`<div id="html_0faebda4fd81c04283a1e40747f268d2" style="width: 100.0%; height: 100.0%;"><b>Zone d'intervention</b><br>12 Rue de la Paix 75002 Paris<br>Commune : Paris<br>Code INSEE : 75102</div>`)[0];
+                popup_30e5e72415839644a3b969c8084715e5.setContent(html_0faebda4fd81c04283a1e40747f268d2);
+            
+        
+
+        marker_ef1aace33a5d1dd049ebd2ca82b24b25.bindPopup(popup_30e5e72415839644a3b969c8084715e5)
+        ;
+
+        
+    
+    
+            marker_ef1aace33a5d1dd049ebd2ca82b24b25.bindTooltip(
+                `<div>
+                     Point central de l'intervention
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ef1aace33a5d1dd049ebd2ca82b24b25.setIcon(icon_dad47828c64b6f812bded7ebbf8ffe9e);
+            
+    
+            var circle_1d30a8876c63353ddd4f28d147565967 = L.circle(
+                [48.869141, 2.331303],
+                {"bubblingMouseEvents": true, "color": "red", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "red", "fillOpacity": 0.06, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 500, "stroke": true, "weight": 3}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+        var popup_3b9955c54eedb7ac8cb375926d595fc3 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fe2566a9b39ac160196d49da8e584795 = $(`<div id="html_fe2566a9b39ac160196d49da8e584795" style="width: 100.0%; height: 100.0%;">Périmètre principal : 500 mètres</div>`)[0];
+                popup_3b9955c54eedb7ac8cb375926d595fc3.setContent(html_fe2566a9b39ac160196d49da8e584795);
+            
+        
+
+        circle_1d30a8876c63353ddd4f28d147565967.bindPopup(popup_3b9955c54eedb7ac8cb375926d595fc3)
+        ;
+
+        
+    
+    
+            var circle_24e30673a266b3b71b860338fcaecfef = L.circle(
+                [48.869141, 2.331303],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "orange", "fillOpacity": 0.1, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 250, "stroke": true, "weight": 3}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+        var popup_9c156adccb2cb3fb0a967bb6641bc8e7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cc8818b885d548b0b52cc12980a3815b = $(`<div id="html_cc8818b885d548b0b52cc12980a3815b" style="width: 100.0%; height: 100.0%;">Zone de vigilance rapprochée : 250 mètres</div>`)[0];
+                popup_9c156adccb2cb3fb0a967bb6641bc8e7.setContent(html_cc8818b885d548b0b52cc12980a3815b);
+            
+        
+
+        circle_24e30673a266b3b71b860338fcaecfef.bindPopup(popup_9c156adccb2cb3fb0a967bb6641bc8e7)
+        ;
+
+        
+    
+    
+            var marker_d8efd8edaa7ace7a22fa87f8be225b91 = L.marker(
+                [48.8697353, 2.3300792],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_9b507a3f0c28d12ff447ff91163c7d00 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "education",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9b1e0b1d3649f4671edb4774d802ce74 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fd1d6caf7bfe01594a772c3c542be5fa = $(`<div id="html_fd1d6caf7bfe01594a772c3c542be5fa" style="width: 100.0%; height: 100.0%;"><b>Centre d'Enseignement de Soins Esth�tiques (�cole secondaire professionnelle priv�e)</b><br>Type : school<br>Priorité : sensible<br>Distance : 111 m</div>`)[0];
+                popup_9b1e0b1d3649f4671edb4774d802ce74.setContent(html_fd1d6caf7bfe01594a772c3c542be5fa);
+            
+        
+
+        marker_d8efd8edaa7ace7a22fa87f8be225b91.bindPopup(popup_9b1e0b1d3649f4671edb4774d802ce74)
+        ;
+
+        
+    
+    
+            marker_d8efd8edaa7ace7a22fa87f8be225b91.bindTooltip(
+                `<div>
+                     school - 111 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_d8efd8edaa7ace7a22fa87f8be225b91.setIcon(icon_9b507a3f0c28d12ff447ff91163c7d00);
+            
+    
+            var marker_9dd0f7ecdbfbd8a7952e8c4eeaf8805c = L.marker(
+                [48.8687585, 2.3297665],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_b69492770fa07a283006ebb204a8ec8a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "plus-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1454b123d853aa0eb8c7a17cc691d8c9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_11be2d27e630805127df1c8bf20cab28 = $(`<div id="html_11be2d27e630805127df1c8bf20cab28" style="width: 100.0%; height: 100.0%;"><b>Pharmacie des Capucines</b><br>Type : pharmacy<br>Priorité : utile<br>Distance : 120 m</div>`)[0];
+                popup_1454b123d853aa0eb8c7a17cc691d8c9.setContent(html_11be2d27e630805127df1c8bf20cab28);
+            
+        
+
+        marker_9dd0f7ecdbfbd8a7952e8c4eeaf8805c.bindPopup(popup_1454b123d853aa0eb8c7a17cc691d8c9)
+        ;
+
+        
+    
+    
+            marker_9dd0f7ecdbfbd8a7952e8c4eeaf8805c.bindTooltip(
+                `<div>
+                     pharmacy - 120 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_9dd0f7ecdbfbd8a7952e8c4eeaf8805c.setIcon(icon_b69492770fa07a283006ebb204a8ec8a);
+            
+    
+            var marker_f5bc1aed69a83d036059a796a6d1be5f = L.marker(
+                [48.8677467, 2.3329845],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_e7a9e3b39db6d862f5159436345dbb42 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "plus-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_14f4f0bb8ca990ee24ab93a518283caa = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_80515998defd80fa5ec468629135b290 = $(`<div id="html_80515998defd80fa5ec468629135b290" style="width: 100.0%; height: 100.0%;"><b>Pharmacie Op�ra Casanova</b><br>Type : pharmacy<br>Priorité : utile<br>Distance : 198 m</div>`)[0];
+                popup_14f4f0bb8ca990ee24ab93a518283caa.setContent(html_80515998defd80fa5ec468629135b290);
+            
+        
+
+        marker_f5bc1aed69a83d036059a796a6d1be5f.bindPopup(popup_14f4f0bb8ca990ee24ab93a518283caa)
+        ;
+
+        
+    
+    
+            marker_f5bc1aed69a83d036059a796a6d1be5f.bindTooltip(
+                `<div>
+                     pharmacy - 198 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f5bc1aed69a83d036059a796a6d1be5f.setIcon(icon_e7a9e3b39db6d862f5159436345dbb42);
+            
+    
+            var marker_06bfe6b00ae9fd6f51cbe762e64845e3 = L.marker(
+                [48.8711342, 2.3313636],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_8bf49e7ec46a14321ef4fd19265fdbfb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "plus-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_355b8ce457db7669959ecac12c71e0f3 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8869f8d8c7fdad2fb4a86763b6bc562c = $(`<div id="html_8869f8d8c7fdad2fb4a86763b6bc562c" style="width: 100.0%; height: 100.0%;"><b>Pharmacie de l'Op�ra</b><br>Type : pharmacy<br>Priorité : utile<br>Distance : 222 m</div>`)[0];
+                popup_355b8ce457db7669959ecac12c71e0f3.setContent(html_8869f8d8c7fdad2fb4a86763b6bc562c);
+            
+        
+
+        marker_06bfe6b00ae9fd6f51cbe762e64845e3.bindPopup(popup_355b8ce457db7669959ecac12c71e0f3)
+        ;
+
+        
+    
+    
+            marker_06bfe6b00ae9fd6f51cbe762e64845e3.bindTooltip(
+                `<div>
+                     pharmacy - 222 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_06bfe6b00ae9fd6f51cbe762e64845e3.setIcon(icon_8bf49e7ec46a14321ef4fd19265fdbfb);
+            
+    
+            var marker_c11eb4a72d2dcd3d35cd776161a6a140 = L.marker(
+                [48.8667074, 2.3326398],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_1b31cef3d9b870d022ecf6dccb4967e2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "education",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_608c7fbde6ad279b3901208547ba77b4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ce4559c41d5740c65423aecfd60d452a = $(`<div id="html_ce4559c41d5740c65423aecfd60d452a" style="width: 100.0%; height: 100.0%;"><b>�cole maternelle</b><br>Type : school<br>Priorité : sensible<br>Distance : 288 m</div>`)[0];
+                popup_608c7fbde6ad279b3901208547ba77b4.setContent(html_ce4559c41d5740c65423aecfd60d452a);
+            
+        
+
+        marker_c11eb4a72d2dcd3d35cd776161a6a140.bindPopup(popup_608c7fbde6ad279b3901208547ba77b4)
+        ;
+
+        
+    
+    
+            marker_c11eb4a72d2dcd3d35cd776161a6a140.bindTooltip(
+                `<div>
+                     school - 288 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c11eb4a72d2dcd3d35cd776161a6a140.setIcon(icon_1b31cef3d9b870d022ecf6dccb4967e2);
+            
+    
+            var marker_755d38f3bbf247f1b2043667f440fe8f = L.marker(
+                [48.8661759, 2.3311515],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_2bea850456031bf2e0b70275f9dd0ab1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "plus-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a6d1d2552362a444f91404aa8c86bd59 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_21e058a168b74cdb224d4f9a36c638c0 = $(`<div id="html_21e058a168b74cdb224d4f9a36c638c0" style="width: 100.0%; height: 100.0%;"><b>Pharmacie Saint-Honor�</b><br>Type : pharmacy<br>Priorité : utile<br>Distance : 330 m</div>`)[0];
+                popup_a6d1d2552362a444f91404aa8c86bd59.setContent(html_21e058a168b74cdb224d4f9a36c638c0);
+            
+        
+
+        marker_755d38f3bbf247f1b2043667f440fe8f.bindPopup(popup_a6d1d2552362a444f91404aa8c86bd59)
+        ;
+
+        
+    
+    
+            marker_755d38f3bbf247f1b2043667f440fe8f.bindTooltip(
+                `<div>
+                     pharmacy - 330 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_755d38f3bbf247f1b2043667f440fe8f.setIcon(icon_2bea850456031bf2e0b70275f9dd0ab1);
+            
+    
+            var marker_024dd9a7f55c1441712f22d99f800637 = L.marker(
+                [48.8662103, 2.3326539],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_b150161e92df473dc8c222f16d4de217 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "education",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cb29ef22e69811190fa5105317c0cf2b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_02752d4372ee733c9844e183a4516241 = $(`<div id="html_02752d4372ee733c9844e183a4516241" style="width: 100.0%; height: 100.0%;"><b>�cole primaire priv�e Notre-Dame-Saint-Roch</b><br>Type : school<br>Priorité : sensible<br>Distance : 341 m</div>`)[0];
+                popup_cb29ef22e69811190fa5105317c0cf2b.setContent(html_02752d4372ee733c9844e183a4516241);
+            
+        
+
+        marker_024dd9a7f55c1441712f22d99f800637.bindPopup(popup_cb29ef22e69811190fa5105317c0cf2b)
+        ;
+
+        
+    
+    
+            marker_024dd9a7f55c1441712f22d99f800637.bindTooltip(
+                `<div>
+                     school - 341 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_024dd9a7f55c1441712f22d99f800637.setIcon(icon_b150161e92df473dc8c222f16d4de217);
+            
+    
+            var marker_e6f2150a6ae94779db231657c191f44f = L.marker(
+                [48.8705363, 2.3358361],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_529ec81715eac046352c80cab8c59677 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "plus-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_97a321c23589f940c619aa6bfca8bfc2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0b7e7f5e3617ae5e6792ce052e4303f7 = $(`<div id="html_0b7e7f5e3617ae5e6792ce052e4303f7" style="width: 100.0%; height: 100.0%;"><b>Pharmacie Choiseul</b><br>Type : pharmacy<br>Priorité : utile<br>Distance : 366 m</div>`)[0];
+                popup_97a321c23589f940c619aa6bfca8bfc2.setContent(html_0b7e7f5e3617ae5e6792ce052e4303f7);
+            
+        
+
+        marker_e6f2150a6ae94779db231657c191f44f.bindPopup(popup_97a321c23589f940c619aa6bfca8bfc2)
+        ;
+
+        
+    
+    
+            marker_e6f2150a6ae94779db231657c191f44f.bindTooltip(
+                `<div>
+                     pharmacy - 366 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e6f2150a6ae94779db231657c191f44f.setIcon(icon_529ec81715eac046352c80cab8c59677);
+            
+    
+            var marker_4a1e3e99a46f8ceeffbb92f7fa9a4507 = L.marker(
+                [48.8718551, 2.3283293],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_b085640fc4c43be869f8b24bb93bfb0c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "plus-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_09c9cb9333b5474ecf23c21ecb9c22e0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_de8ca8a7c07029ab1ecec42148c11e30 = $(`<div id="html_de8ca8a7c07029ab1ecec42148c11e30" style="width: 100.0%; height: 100.0%;"><b>Pharmacie Caumartin</b><br>Type : pharmacy<br>Priorité : utile<br>Distance : 372 m</div>`)[0];
+                popup_09c9cb9333b5474ecf23c21ecb9c22e0.setContent(html_de8ca8a7c07029ab1ecec42148c11e30);
+            
+        
+
+        marker_4a1e3e99a46f8ceeffbb92f7fa9a4507.bindPopup(popup_09c9cb9333b5474ecf23c21ecb9c22e0)
+        ;
+
+        
+    
+    
+            marker_4a1e3e99a46f8ceeffbb92f7fa9a4507.bindTooltip(
+                `<div>
+                     pharmacy - 372 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4a1e3e99a46f8ceeffbb92f7fa9a4507.setIcon(icon_b085640fc4c43be869f8b24bb93bfb0c);
+            
+    
+            var marker_f662f799fd5190720356ca1180c30b69 = L.marker(
+                [48.8706039, 2.3262245],
+                {
+}
+            ).addTo(map_b38c27bd7619663d2e01a103f4eb5951);
+        
+    
+            var icon_568080f9665ada98d2c1c52fbe66926a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "plus-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c33332265886c7d6169d074912a8aca3 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7a33fbf5fd3e803da1e95410f1b5be8d = $(`<div id="html_7a33fbf5fd3e803da1e95410f1b5be8d" style="width: 100.0%; height: 100.0%;"><b>Pharmacie LeClerc</b><br>Type : pharmacy<br>Priorité : utile<br>Distance : 406 m</div>`)[0];
+                popup_c33332265886c7d6169d074912a8aca3.setContent(html_7a33fbf5fd3e803da1e95410f1b5be8d);
+            
+        
+
+        marker_f662f799fd5190720356ca1180c30b69.bindPopup(popup_c33332265886c7d6169d074912a8aca3)
+        ;
+
+        
+    
+    
+            marker_f662f799fd5190720356ca1180c30b69.bindTooltip(
+                `<div>
+                     pharmacy - 406 m
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f662f799fd5190720356ca1180c30b69.setIcon(icon_568080f9665ada98d2c1c52fbe66926a);
+            
+</script>
+</html>
