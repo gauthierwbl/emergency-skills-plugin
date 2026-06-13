@@ -149,8 +149,9 @@ def build_deterministic_workflow(llm_provider: str):
 
 if __name__ == "__main__":
     load_dotenv()
-    
-    SELECTED_PROVIDER = "google" 
+
+    #Remplacer par "google" si on veut utiliser Gemini
+    SELECTED_PROVIDER = "anthropic" 
     emergency_workflow = build_deterministic_workflow(SELECTED_PROVIDER)
     
     adresse_saisie = input("Entrez l'adresse (laissez vide pour utiliser votre position IP) : ").strip()
